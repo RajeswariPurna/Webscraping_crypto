@@ -1,0 +1,37 @@
+# Importing the necessary libraries
+import pandas as pd
+import requests
+from bs4 import BeautifulSoup
+
+# url path from which the data is scraped
+url = 'https://cryptorank.io/funding-rounds'
+
+# retrieving the data from specified url
+page = requests.get(url)
+
+# parsing the html content using BeautifulSoup 
+soup = BeautifulSoup(page.content,'html.parser')
+
+# finding the table in the data
+table = soup.find('table')
+
+# Initializing a list to store headers
+headers = []
+
+# iterating over the table to find the headings
+for th in table.find_all('th'):
+    headers.append(th.text.strip())
+
+# Initializing a list to store the row values
+rows = []
+
+# retrieveing rows from the table
+for tr in table.find_all('tr'):
+    cells = tr.find_all('td')
+    row =[ cell.text.strip() for cell in cells ]
+rows.append(row)
+
+# converting the data to a dataframe
+df = pd.DataFrame(rows,columns = headers)
+
+df
